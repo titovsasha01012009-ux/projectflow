@@ -1,0 +1,14 @@
+{
+  "include": ["app", "tests"],
+  "extraPaths": ["."],
+  "venvPath": ".",
+  "venv": "venv",
+  "pythonVersion": "3.11",
+  "typeCheckingMode": "basic",
+  "reportAttributeAccessIssue": "none",
+  "reportArgumentType": "none",
+  "reportGeneralTypeIssues": "none",
+  "reportIncompatibleVariableOverride": "none",
+  "reportMissingImports": "warning",
+  "reportUnusedImport": "warning"
+}
