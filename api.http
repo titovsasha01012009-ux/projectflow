@@ -1,0 +1,27 @@
+### Регистрация
+POST http://localhost:8000/auth/register
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "email": "admin@example.com",
+  "password": "secret123",
+  "role": "admin"
+}
+
+### Вход
+POST http://localhost:8000/auth/login
+Content-Type: application/x-www-form-urlencoded
+
+username=admin&password=secret123
+
+### Создание задачи (с токеном)
+POST http://localhost:8000/tasks/
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "title": "Разработать модуль",
+  "description": "Написать код",
+  "due_date": "2026-10-01T00:00:00"
+}
