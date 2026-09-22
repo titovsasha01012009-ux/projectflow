@@ -1,10 +1,12 @@
 """Утилиты аутентификации: JWT-токены, хеширование паролей."""
 from datetime import datetime, timedelta
 
+import bcrypt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+
+
 from sqlmodel import Session, col, select
 
 from app.database import get_session
@@ -14,18 +16,24 @@ SECRET_KEY = "change-me-in-production-please-use-env"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Проверяет соответствие пароля его хешу."""
-    return pwd_context.verify(plain_password, hashed_password)
+    """Проверяет соответствие пароля его bcrypt-хешу."""
+    return bcrypt.checkpw(
+        plain_password.encode("utf-8"),
+        hashed_password.encode("utf-8"),
+    )
 
 
 def get_password_hash(password: str) -> str:
     """Возвращает bcrypt-хеш пароля."""
-    return pwd_context.hash(password)
+    return bcrypt.hashpw(
+        password.encode("utf-8"),
+        bcrypt.gensalt(),
+    ).decode("utf-8")
 
 
 def create_access_token(data: dict) -> str:
@@ -51,9 +59,7 @@ async def get_current_user(
         raise credentials_exception
 
     try:
-        payload = jwt.decode(  # type: ignore[arg-type]
-            token, SECRET_KEY, algorithms=[ALGORITHM]
-        )
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         raw_sub = payload.get("sub")
         if not isinstance(raw_sub, str):
             raise credentials_exception
@@ -62,7 +68,7 @@ async def get_current_user(
         raise credentials_exception from exc
 
     statement = select(User).where(col(User.username) == username)
-    user = session.exec(statement).first()  # type: ignore[arg-type]
+    user = session.exec(statement).first()
     if user is None:
         raise credentials_exception
     return user
