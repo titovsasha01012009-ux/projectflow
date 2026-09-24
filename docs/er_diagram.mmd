@@ -1,0 +1,43 @@
+erDiagram
+    USERS ||--o{ PROJECTS : "владеет"
+    USERS ||--o{ TASKS : "исполняет"
+    USERS ||--o{ REPORTS : "создаёт"
+    PROJECTS ||--o{ TASKS : "содержит"
+
+    USERS {
+        int id PK
+        string username UK
+        string email UK
+        string hashed_password
+        string role
+        bool is_active
+        datetime created_at
+    }
+
+    PROJECTS {
+        int id PK
+        string name
+        string description
+        int owner_id FK
+        datetime created_at
+    }
+
+    TASKS {
+        int id PK
+        string title
+        string description
+        string status
+        int project_id FK
+        int assignee_id FK
+        datetime due_date
+        datetime created_at
+        datetime updated_at
+    }
+
+    REPORTS {
+        int id PK
+        string report_type
+        string parameters
+        int created_by FK
+        datetime created_at
+    }

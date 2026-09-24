@@ -1,0 +1,16 @@
+stateDiagram-v2
+    [*] --> new : Создание задачи
+
+    new --> in_progress : Начать работу
+    new --> rejected : Отклонить
+
+    in_progress --> review : Отправить на проверку
+    in_progress --> rejected : Отклонить
+
+    review --> done : Принять
+    review --> rejected : Отклонить
+
+    rejected --> new : Вернуть в работу
+
+    done --> [*] : Завершено
+    

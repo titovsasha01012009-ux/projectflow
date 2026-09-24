@@ -1,0 +1,27 @@
+graph TB
+    subgraph Клиент
+        UI[Swagger UI / браузер]
+    end
+
+    subgraph Backend
+        Auth[AuthModule<br/>/auth/register<br/>/auth/login]
+        Doc[DocumentModule<br/>/tasks/*]
+        Rep[ReportModule<br/>/reports/*]
+    end
+
+    subgraph БД
+        DB[(SQLite<br/>projectflow.db)]
+    end
+
+    UI -->|HTTP| Auth
+    UI -->|HTTP + JWT| Doc
+    UI -->|HTTP + JWT| Rep
+
+    Auth -->|users| DB
+    Doc -->|tasks, projects| DB
+    Rep -->|tasks, reports| DB
+
+    Auth -.->|JWT| Doc
+    Auth -.->|JWT| Rep
+    Doc -->|данные| Rep
+    
